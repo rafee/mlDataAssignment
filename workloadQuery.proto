@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+service WorkloadQuery {
+    rpc GetSamples(RequestForWorkload) returns (ResponseForData) {}
+}
+
+message RequestForWorkload {
+    fixed64 rfwId = 1;
+    message BenchmarkType {
+        string source = 1;
+        string type = 2;
+    }
+    BenchmarkType benchmarkType = 2;
+    string workloadMetric = 3;
+    int32 batchUnit = 4;
+    int32 batchId = 5;
+    int32 batchSize = 6;
+}
+
+message ResponseForData {
+    fixed64 rfwId = 1;
+    int32 lastBatchId = 2;
+    Batch batches = 3;
+}
+
+message Batch {
+    repeated Sample samples = 1;  
+}
+
+message Sample {
+    uint32 cpuAvg = 1;
+	uint32 networkIn = 2;
+	uint32 networkOut = 3;
+	double memoryAvg = 4;
+	double finalTarget = 5;
+}
