@@ -20,17 +20,17 @@ message RequestForWorkload {
 message ResponseForData {
     fixed64 rfwId = 1;
     int32 lastBatchId = 2;
-    Batch batches = 3;
+    repeated double samples = 3;
 }
 
-message Batch {
-    repeated Sample samples = 1;  
-}
+// message Batch {
+//     repeated Sample samples = 1;  
+// }
 
-message Sample {
-    uint32 cpuAvg = 1;
-	uint32 networkIn = 2;
-	uint32 networkOut = 3;
-	double memoryAvg = 4;
-	double finalTarget = 5;
-}
+// message Sample {
+//     uint32 cpuAvg = 1;
+// 	uint32 networkIn = 2;
+// 	uint32 networkOut = 3;
+// 	double memoryAvg = 4;
+// 	double finalTarget = 5;
+// }

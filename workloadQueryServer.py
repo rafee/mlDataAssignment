@@ -1,5 +1,5 @@
 from concurrent import futures
-from google.protobuf import struct_pb2
+# from google.protobuf import struct_pb2
 import argparse
 import time
 
@@ -16,45 +16,42 @@ bigquery_client = bigquery.Client()
 
 class WorkloadQueryMockServer(workloadQuery_pb2_grpc.WorkloadQueryServicer):
     def GetSamples(self, request, context):
-        return workloadQuery_pb2.ResponseForData(rfwId=2019)
-    #     with status.context(context):
-    #         response = workloadQuery_pb2.ResponseForData()
-    #         return response
-    # dataset_id = 'lake'
-    # table_id = 'dvd_testing'
-    # sql = """
-    #     SELECT * FROM `assignemnt1-cloud-deployment.{dataset}.{table}` LIMIT 10 OFFSET 40
-    #     """.format(dataset=dataset_id, table=table_id)
-    # query_job = bigquery_client.query(sql)
+        response = workloadQuery_pb2.ResponseForData()
+        response.rfwId = request.rfwId
+
+        project_id = 'assignemnt1-cloud-deployment'
+        dataset_id = 'lake'
+        table_id = request.benchmarkType.source.lower()+'_'+request.benchmarkType.type
+        sql = """
+        SELECT {metric} FROM `{project}.{dataset}.{table}` 
+        LIMIT {endpoint} OFFSET {startpoint}
+        """.format(metric=request.workloadMetric, project=project_id,
+                   dataset=dataset_id, table=table_id, startpoint=request.batchUnit *
+                   (request.batchId-1), endpoint=request.batchUnit*request.batchSize)
+        # print(sql)
+        query_job = bigquery_client.query(sql)
+        try:
+            # Set a timeout because queries could take longer than one minute.
+            results = query_job.result(timeout=30)
+        except futures.TimeoutError:
+            return workloadQuery_pb2.ResponseForData(rfwId=2021)
+        for result in results:
+            getattr(response,"samples").append(result[0])
+        return response
 
 
-
-def serve(port,shutdown_grace_duration):
-    # try:
-    #     # Set a timeout because queries could take longer than one minute.
-    #     results = query_job.result(timeout=30)
-    # except futures.TimeoutError:
-    #     return flask.render_template("timeout.html", job_id=query_job.job_id)
-
-    # return flask.render_template("query_result.html", results=results)
-
-    # Previous code
+def serve(port, shutdown_grace_duration):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     workloadQuery_pb2_grpc.add_WorkloadQueryServicer_to_server(
         WorkloadQueryMockServer(), server)
     p = server.add_insecure_port('[::]:{}'.format(port))
     server.start()
-    
+
     try:
         while True:
             time.sleep(_ONE_DAY_IN_SECONDS)
     except KeyboardInterrupt:
         server.stop(shutdown_grace_duration)
-    # print(f'server running on port {p}.')
-    # server.wait_for_termination()
-
-
-# serve()
 
 
 if __name__ == "__main__":
