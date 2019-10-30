@@ -6,7 +6,6 @@ import time
 import grpc
 import workloadQuery_pb2
 import workloadQuery_pb2_grpc
-import status
 
 from google.cloud import bigquery
 

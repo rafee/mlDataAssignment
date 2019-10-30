@@ -1,0 +1,31 @@
+#
+# A Bookstore example API configuration.
+#
+# Below, replace MY_PROJECT_ID with your Google Cloud Project ID.
+#
+
+# The configuration schema is defined by service.proto file
+# https://github.com/googleapis/googleapis/blob/master/google/api/service.proto
+type: google.api.Service
+config_version: 3
+
+#
+# Name of the endpoints service configuration.
+#
+name: dataset.mohammadrafee.com
+
+#
+# API title to appear in the user interface (Google Cloud Console).
+#
+title: Dataset gRPC API
+apis:
+- name: com.mohammadrafee.dataset.WorkloadQuery
+
+#
+# API usage restrictions.
+#
+usage:
+  rules:
+  # ListShelves methods can be called without an API Key.
+  - selector: com.mohammadrafee.dataset.WorkloadQuery.GetSamples
+    allow_unregistered_calls: true

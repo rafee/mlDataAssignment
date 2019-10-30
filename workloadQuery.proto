@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package com.mohammadrafee.dataset;
+
 service WorkloadQuery {
     rpc GetSamples(RequestForWorkload) returns (ResponseForData) {}
 }

@@ -15,7 +15,7 @@ class WorkloadQueryStub(object):
       channel: A grpc.Channel.
     """
     self.GetSamples = channel.unary_unary(
-        '/WorkloadQuery/GetSamples',
+        '/com.mohammadrafee.dataset.WorkloadQuery/GetSamples',
         request_serializer=workloadQuery__pb2.RequestForWorkload.SerializeToString,
         response_deserializer=workloadQuery__pb2.ResponseForData.FromString,
         )
@@ -42,5 +42,5 @@ def add_WorkloadQueryServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'WorkloadQuery', rpc_method_handlers)
+      'com.mohammadrafee.dataset.WorkloadQuery', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))
