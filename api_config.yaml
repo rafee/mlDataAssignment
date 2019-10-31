@@ -26,6 +26,6 @@ apis:
 #
 usage:
   rules:
-  # ListShelves methods can be called without an API Key.
+  # GetSamples methods can be called without an API Key.
   - selector: com.mohammadrafee.dataset.WorkloadQuery.GetSamples
     allow_unregistered_calls: true
