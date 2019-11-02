@@ -8,8 +8,8 @@ import workloadQuery_pb2_grpc
 import requests
 from tabulate import tabulate
 
-_GRPC_ENDPOINT = ''
-_HTTP_ENDPOINT = 'http://mlquery.mohammadrafee.com/v1/mldata'
+_GRPC_ENDPOINT = 'grpc.dataset.mohammadrafee.com:80'
+_HTTP_ENDPOINT = 'http://rest.dataset.mohammadrafee.com/v1/mldata'
 
 def generateId():
     return 0
@@ -29,7 +29,7 @@ def binaryRequest(rfwid, args):
     bt = workloadQuery_pb2.RequestForWorkload.BenchmarkType(source=args['source'], type=args['type'])
     rfw = workloadQuery_pb2.RequestForWorkload(rfwId=rfwid, benchmarkType=bt, workloadMetric=args['workloadMetric'], batchUnit=args['batchUnit'], batchId=args['batchId'], batchSize=args['batchSize'])
 
-    r = client.GetSamples(request)
+    r = client.GetSamples(rfw)
     return {'lastbatchId': r.lastBatchId, 'rfwid': r.rfwId, 'samples': r.samples}
 
 

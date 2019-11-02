@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package com.mohammadrafee.dataset;
 
-import "google/api/annotations.proto";
-
 service WorkloadQuery {
     rpc GetSamples(RequestForWorkload) returns (ResponseForData) {}
 }
