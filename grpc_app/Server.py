@@ -1,41 +1,48 @@
 from concurrent import futures
-# from google.protobuf import struct_pb2
 import argparse
 import time
+import csv
 
 import grpc
 import workloadQuery_pb2
 import workloadQuery_pb2_grpc
 
-from google.cloud import bigquery
+from google.cloud import storage
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
-bigquery_client = bigquery.Client()
 
+def parse_method(BUCKET='assignment1-data', FILE='Input-Data/NDBench-testing.csv'):
+    client = storage.Client()
+    bucket = client.get_bucket(BUCKET)
+    blob = bucket.get_blob(FILE)
+    csv_data = blob.download_as_string()
+    read_data = csv.reader(csv_data.decode("utf-8").splitlines())
+
+    return list(read_data)
 
 class WorkloadQueryMockServer(workloadQuery_pb2_grpc.WorkloadQueryServicer):
     def GetSamples(self, request, context):
         response = workloadQuery_pb2.ResponseForData()
         response.rfwId = request.rfwId
+        benchmarkType_source = request.benchmarkType.source
+        benchmarkType_type = request.benchmarkType.type
+        workloadMetric = request.workloadMetric
+        batchUnit = request.batchUnit
+        batchId = request.batchId
+        batchSize = request.batchSize
 
-        project_id = 'assignemnt1-cloud-deployment'
-        dataset_id = 'lake'
-        table_id = request.benchmarkType.source.lower()+'_'+request.benchmarkType.type
-        sql = """
-        SELECT {metric} FROM `{project}.{dataset}.{table}` 
-        LIMIT {endpoint} OFFSET {startpoint}
-        """.format(metric=request.workloadMetric, project=project_id,
-                   dataset=dataset_id, table=table_id, startpoint=request.batchUnit *
-                   (request.batchId-1), endpoint=request.batchUnit*request.batchSize)
-        # print(sql)
-        query_job = bigquery_client.query(sql)
-        try:
-            # Set a timeout because queries could take longer than one minute.
-            results = query_job.result(timeout=30)
-        except futures.TimeoutError:
-            return workloadQuery_pb2.ResponseForData(rfwId=2021)
-        for result in results:
-            getattr(response,"samples").append(result[0])
+        bucket = 'assignment1-data'
+        file = 'Input-Data/'+benchmarkType_source+'-'+benchmarkType_type+'.csv'
+        loaded_data = parse_method(bucket, file)
+        loaded_data = loaded_data[1:]
+        
+        starting_index = (batchId-1)*batchUnit
+        finishing_index = (batchId+batchSize-1)*batchUnit
+        lookup_dict = {'CPU': 0, 'NetworkIn': 1, 'NetworkOut': 2, 'Memory': 3}
+        metricIndex = lookup_dict[workloadMetric]
+        outputs = [data[metricIndex] for data in loaded_data]
+        outputs = outputs[starting_index:finishing_index]
+        getattr(response,"samples").append(outputs)
         return response
 
 

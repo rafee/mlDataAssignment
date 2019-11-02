@@ -13,4 +13,4 @@ RUN python -m grpc_tools.protoc \
 
 EXPOSE 8000
  
-ENTRYPOINT ["python", "/datasetquery/workloadQueryServer.py"]
+ENTRYPOINT ["python", "/datasetquery/Server.py"]
