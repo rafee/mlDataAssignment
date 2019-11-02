@@ -8,55 +8,55 @@ import workloadQuery_pb2_grpc
 import requests
 from tabulate import tabulate
 
-_SERVER_ADDR = ''
-_HTTP_ENDPOINT = 'http://mlquery.mohammadrafee.com/v1/'
+_GRPC_ENDPOINT = ''
+_HTTP_ENDPOINT = 'http://mlquery.mohammadrafee.com/v1/mldata'
 
 def generateId():
     return 0
 
-def textRequest(args):
-    params =  f"sources/{args['benchmark']}/types/{args['set']}/metrics/{args['metric']}/batch_units/{args['batch_unit']}/batch_id/{args['batch_id']}/batch_size/{args['batch_size']}"
-    url = _HTTP_ENDPOINT + params
-    print('getting from ' + url)
-    r = requests.get(url)
+def textRequest(rfwid, args):
+    r = requests.get(_HTTP_ENDPOINT, params=args, headers={'rfwid':str(rfwid)})
     if r.status_code == 200:
         return r.json()
     else:
         print('An error has occurred during GET request')
         exit()
 
-def binaryRequest(args):
-    channel = grpc.insecure_channel(_SERVER_ADDR)
+def binaryRequest(rfwid, args):
+    channel = grpc.insecure_channel(_GRPC_ENDPOINT)
     client = workloadQuery_pb2_grpc.WorkloadQueryStub(channel)
 
-    request = workloadQuery_pb2.RequestForWorkload()
-    testResponse = client.GetSamples(request)
-    return {}
+    bt = workloadQuery_pb2.RequestForWorkload.BenchmarkType(source=args['source'], type=args['type'])
+    rfw = workloadQuery_pb2.RequestForWorkload(rfwId=rfwid, benchmarkType=bt, workloadMetric=args['workloadMetric'], batchUnit=args['batchUnit'], batchId=args['batchId'], batchSize=args['batchSize'])
+
+    r = client.GetSamples(request)
+    return {'lastbatchId': r.lastBatchId, 'rfwid': r.rfwId, 'samples': r.samples}
 
 
 
 parser = argparse.ArgumentParser(description='Retrieve workload data for machine learning purposes.')
-parser.add_argument('benchmark', metavar='benchmark', type=str, help='The benchmark from which the data is sourced.')
-parser.add_argument('set', metavar='set', type=str, help='The set (train/test) from which the data is sourced.')
-parser.add_argument('metric', metavar='metric', type=str, help='The metric ("cpu", "networkIn", "networkOut", "memory", "finalTarget") to retrieve for each sample.')
+parser.add_argument('source', metavar='<benchmark>', type=str, help='The benchmark from which the data is sourced.')
+parser.add_argument('type', metavar='<set>', type=str, help='The set (train/test) from which the data is sourced.')
+parser.add_argument('workloadMetric', metavar='<metric>', type=str, help='The metric ("cpu", "networkIn", "networkOut", "memory", "finalTarget") to retrieve for each sample.')
 parser.add_argument('--binary', '-b', action='store_true', help='Use binary (de)serialization instead of text (de)serialization.')
-parser.add_argument('--batch-unit', '-u', metavar='unit', type=int, default=32, help='The number of samples included in each batch.')
-parser.add_argument('--batch-id', '-i', metavar='id', type=int, default=0, help='The index of the first batch to retrieve.')
-parser.add_argument('--batch-size', '-s', metavar='size', type=int, default=1, help='The number of batches to retrieve.')
+parser.add_argument('--batch-unit', '-u', metavar='<unit>', dest='batchUnit', type=int, default=32, help='The number of samples included in each batch.')
+parser.add_argument('--batch-id', '-i', metavar='<id>', dest='batchId', type=int, default=1, help='The index of the first batch to retrieve.')
+parser.add_argument('--batch-size', '-s', metavar='<size>', dest='batchSize', type=int, default=1, help='The number of batches to retrieve.')
 
 args = vars(parser.parse_args())
 print(args)
-#example
 
 rfwId = generateId()
 
-if args['binary']:
-    result = binaryRequest(args)
-else:
-    result = textRequest(args)
+binary = args['binary']
+del args['binary']
 
-batches =
-table = tabulate(map(lambda s: [s], result['samples']), showindex=True, headers=['Sample', f"Value({args['metric']})"])
+if binary:
+    result = binaryRequest(rfwId, args)
+else:
+    result = textRequest(rfwId, args)
+
+table = tabulate(map(lambda s: [s], result['samples']), showindex=True, headers=['Sample', f"Value({args['workloadMetric']})"])
 
 print(f'Client rfw id: {result["rfwid"]}')
 print(f'Last batch id is {result["lastbatchId"]}')
