@@ -13,6 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.api import annotations_pb2 as google_dot_api_dot_annotations__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -20,8 +21,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='com.mohammadrafee.dataset',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x13workloadQuery.proto\x12\x19\x63om.mohammadrafee.dataset\"\xf5\x01\n\x12RequestForWorkload\x12\r\n\x05rfwId\x18\x01 \x01(\x06\x12R\n\rbenchmarkType\x18\x02 \x01(\x0b\x32;.com.mohammadrafee.dataset.RequestForWorkload.BenchmarkType\x12\x16\n\x0eworkloadMetric\x18\x03 \x01(\t\x12\x11\n\tbatchUnit\x18\x04 \x01(\x05\x12\x0f\n\x07\x62\x61tchId\x18\x05 \x01(\x05\x12\x11\n\tbatchSize\x18\x06 \x01(\x05\x1a-\n\rBenchmarkType\x12\x0e\n\x06source\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\"F\n\x0fResponseForData\x12\r\n\x05rfwId\x18\x01 \x01(\x06\x12\x13\n\x0blastBatchId\x18\x02 \x01(\x05\x12\x0f\n\x07samples\x18\x03 \x03(\x01\x32z\n\rWorkloadQuery\x12i\n\nGetSamples\x12-.com.mohammadrafee.dataset.RequestForWorkload\x1a*.com.mohammadrafee.dataset.ResponseForData\"\x00\x62\x06proto3')
-)
+  serialized_pb=_b('\n\x13workloadQuery.proto\x12\x19\x63om.mohammadrafee.dataset\x1a\x1cgoogle/api/annotations.proto\"\xf5\x01\n\x12RequestForWorkload\x12\r\n\x05rfwId\x18\x01 \x01(\x06\x12R\n\rbenchmarkType\x18\x02 \x01(\x0b\x32;.com.mohammadrafee.dataset.RequestForWorkload.BenchmarkType\x12\x16\n\x0eworkloadMetric\x18\x03 \x01(\t\x12\x11\n\tbatchUnit\x18\x04 \x01(\x05\x12\x0f\n\x07\x62\x61tchId\x18\x05 \x01(\x05\x12\x11\n\tbatchSize\x18\x06 \x01(\x05\x1a-\n\rBenchmarkType\x12\x0e\n\x06source\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\"F\n\x0fResponseForData\x12\r\n\x05rfwId\x18\x01 \x01(\x06\x12\x13\n\x0blastBatchId\x18\x02 \x01(\x05\x12\x0f\n\x07samples\x18\x03 \x03(\x01\x32\x9e\x02\n\rWorkloadQuery\x12\x8c\x02\n\nGetSamples\x12-.com.mohammadrafee.dataset.RequestForWorkload\x1a*.com.mohammadrafee.dataset.ResponseForData\"\xa2\x01\x82\xd3\xe4\x93\x02\x9b\x01\x12\x98\x01/v1/sources/{benchmarkType.source}/types/{benchmarkType.type}/metrics/{workloadMetric}/batch_units/{batchUnit}/batch_id/{batchId}/batch_size/{batchSize}b\x06proto3')
+  ,
+  dependencies=[google_dot_api_dot_annotations__pb2.DESCRIPTOR,])
 
 
 
@@ -59,8 +61,8 @@ _REQUESTFORWORKLOAD_BENCHMARKTYPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=251,
-  serialized_end=296,
+  serialized_start=281,
+  serialized_end=326,
 )
 
 _REQUESTFORWORKLOAD = _descriptor.Descriptor(
@@ -124,8 +126,8 @@ _REQUESTFORWORKLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=51,
-  serialized_end=296,
+  serialized_start=81,
+  serialized_end=326,
 )
 
 
@@ -169,8 +171,8 @@ _RESPONSEFORDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=298,
-  serialized_end=368,
+  serialized_start=328,
+  serialized_end=398,
 )
 
 _REQUESTFORWORKLOAD_BENCHMARKTYPE.containing_type = _REQUESTFORWORKLOAD
@@ -209,8 +211,8 @@ _WORKLOADQUERY = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=370,
-  serialized_end=492,
+  serialized_start=401,
+  serialized_end=687,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetSamples',
@@ -219,7 +221,7 @@ _WORKLOADQUERY = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_REQUESTFORWORKLOAD,
     output_type=_RESPONSEFORDATA,
-    serialized_options=None,
+    serialized_options=_b('\202\323\344\223\002\233\001\022\230\001/v1/sources/{benchmarkType.source}/types/{benchmarkType.type}/metrics/{workloadMetric}/batch_units/{batchUnit}/batch_id/{batchId}/batch_size/{batchSize}'),
   ),
 ])
 _sym_db.RegisterServiceDescriptor(_WORKLOADQUERY)

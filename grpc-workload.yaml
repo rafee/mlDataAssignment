@@ -6,9 +6,12 @@ spec:
   ports:
   # Port that accepts gRPC and JSON/HTTP2 requests over HTTP.
   - port: 80
-    targetPort: 9000
+    # targetPort: 8090
+    # protocol: TCP
+    # name: http2
+    targetPort: 8080
     protocol: TCP
-    name: http2
+    name: http
   selector:
     app: esp-grpc-workload
   type: LoadBalancer
@@ -28,13 +31,14 @@ spec:
       - name: esp
         image: gcr.io/endpoints-release/endpoints-runtime:1
         args: [
-          "--http2_port=9000",
+          "--http_port=8080",
+          # "--http2_port=8090",
           "--service=dataset.mohammadrafee.com",
           "--rollout_strategy=managed",
           "--backend=grpc://127.0.0.1:8000"
         ]
         ports:
-          - containerPort: 9000
+          - containerPort: 8080
       - name: workload
         image: gcr.io/assignemnt1-cloud-deployment/grpc-workload-server:latest
         ports:

@@ -4,7 +4,10 @@ import grpc
 import workloadQuery_pb2
 import workloadQuery_pb2_grpc
 
-channel = grpc.insecure_channel('dataset.mohammadrafee.com:80')
+server_ip='dataset.mohammadrafee.com:80'
+# server_ip='35.202.153.101:80'
+
+channel = grpc.insecure_channel(server_ip)
 client = workloadQuery_pb2_grpc.WorkloadQueryStub(channel)
 
 request = workloadQuery_pb2.RequestForWorkload()
