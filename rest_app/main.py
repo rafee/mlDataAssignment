@@ -21,9 +21,15 @@ def hello():
     return 'Hello World!'
 
 
-@app.route('/v1/sources/<benchmarkType_source>/types/<benchmarkType_type>/metrics/<workloadMetric>/batch_units/<batchUnit>/batch_id/<batchId>/batch_size/<batchSize>', methods=["GET"])
-def GetSamples(benchmarkType_source, benchmarkType_type, workloadMetric, batchUnit, batchId, batchSize):
+@app.route('/v1/mldata/', methods=["GET"])
+def GetSamples():
     RFWID = request.headers.get('rfwid')
+    benchmarkType_source = request.args['source']
+    benchmarkType_type = request.args['type']
+    workloadMetric = request.args['workloadMetric']
+    batchUnit = request.args['batchUnit']
+    batchId = request.args['batchId']
+    batchSize = request.args['batchSize']
     bucket = 'assignment1-data'
     file = 'Input-Data/'+benchmarkType_source+'-'+benchmarkType_type+'.csv'
     loaded_data = parse_method(bucket, file)
