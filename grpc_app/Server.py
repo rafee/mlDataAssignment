@@ -40,9 +40,9 @@ class WorkloadQueryMockServer(workloadQuery_pb2_grpc.WorkloadQueryServicer):
         finishing_index = (batchId+batchSize-1)*batchUnit
         lookup_dict = {'CPU': 0, 'NetworkIn': 1, 'NetworkOut': 2, 'Memory': 3}
         metricIndex = lookup_dict[workloadMetric]
-        outputs = [data[metricIndex] for data in loaded_data]
+        outputs = [float(data[metricIndex]) for data in loaded_data]
         outputs = outputs[starting_index:finishing_index]
-        getattr(response,"samples").append(outputs)
+        getattr(response,"samples").extend(outputs)
         return response
 
 
