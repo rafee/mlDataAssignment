@@ -44,7 +44,7 @@ def GetSamples():
     metricIndex = lookup_dict[workloadMetric]
     outputs = [float(data[metricIndex]) for data in loaded_data]
     outputs = outputs[starting_index:finishing_index]
-    return jsonify(rfwid=RFWID, lastbatchId=batchId+batchSize, samples=outputs)
+    return jsonify(rfwid=RFWID, lastbatchId=batchId+batchSize - 1, samples=outputs)
 
 
 if __name__ == '__main__':

@@ -36,6 +36,6 @@ spec:
         ports:
           - containerPort: 9000
       - name: workload
-        image: gcr.io/assignemnt1-cloud-deployment/grpc-workload-server:v2
+        image: gcr.io/assignemnt1-cloud-deployment/grpc-workload-server:v3
         ports:
           - containerPort: 8000
