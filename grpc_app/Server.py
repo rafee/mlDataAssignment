@@ -11,6 +11,7 @@ from google.cloud import storage
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
+
 def parse_method(BUCKET='assignment1-data', FILE='Input-Data/NDBench-testing.csv'):
     client = storage.Client()
     bucket = client.get_bucket(BUCKET)
@@ -19,6 +20,7 @@ def parse_method(BUCKET='assignment1-data', FILE='Input-Data/NDBench-testing.csv
     read_data = csv.reader(csv_data.decode("utf-8").splitlines())
 
     return list(read_data)
+
 
 class WorkloadQueryMockServer(workloadQuery_pb2_grpc.WorkloadQueryServicer):
     def GetSamples(self, request, context):
@@ -35,14 +37,16 @@ class WorkloadQueryMockServer(workloadQuery_pb2_grpc.WorkloadQueryServicer):
         file = 'Input-Data/'+benchmarkType_source+'-'+benchmarkType_type+'.csv'
         loaded_data = parse_method(bucket, file)
         loaded_data = loaded_data[1:]
-        
+
         starting_index = (batchId-1)*batchUnit
         finishing_index = (batchId+batchSize-1)*batchUnit
+        lastBatchId = batchId+batchSize-1
         lookup_dict = {'CPU': 0, 'NetworkIn': 1, 'NetworkOut': 2, 'Memory': 3}
         metricIndex = lookup_dict[workloadMetric]
         outputs = [float(data[metricIndex]) for data in loaded_data]
         outputs = outputs[starting_index:finishing_index]
-        getattr(response,"samples").extend(outputs)
+        getattr(response, "samples").extend(outputs)
+        response.lastBatchId = lastBatchId
         return response
 
 

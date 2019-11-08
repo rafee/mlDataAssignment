@@ -24,6 +24,7 @@ def hello():
 @app.route('/v1/mldata/', methods=["GET"])
 def GetSamples():
     RFWID = request.headers.get('rfwid')
+    RFWID = int(RFWID)
     benchmarkType_source = request.args['source']
     benchmarkType_type = request.args['type']
     workloadMetric = request.args['workloadMetric']
@@ -41,7 +42,7 @@ def GetSamples():
     finishing_index = (batchId+batchSize-1)*batchUnit
     lookup_dict = {'CPU': 0, 'NetworkIn': 1, 'NetworkOut': 2, 'Memory': 3}
     metricIndex = lookup_dict[workloadMetric]
-    outputs = [data[metricIndex] for data in loaded_data]
+    outputs = [float(data[metricIndex]) for data in loaded_data]
     outputs = outputs[starting_index:finishing_index]
     return jsonify(rfwid=RFWID, lastbatchId=batchId+batchSize, samples=outputs)
 
